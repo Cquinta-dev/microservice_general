@@ -1,0 +1,25 @@
+# Ignorar archivos de compilación de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+app/models/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+app/routes/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+app/schemas/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+app/services/__pycache__/
+*.pyc
+*.pyo
+*.pyd
