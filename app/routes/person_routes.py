@@ -8,7 +8,7 @@ person_routes = Blueprint('person', __name__)
 
 #Method for create person.
 @person_routes.route('/createPerson',methods=['POST'])
-@jwt_required()
+#@jwt_required()
 def create_person():
 
     try:        
@@ -20,7 +20,7 @@ def create_person():
         if missing_fields:
             return jsonify({'error': 'Missing fields', 'missing': list(missing_fields)}), 400
         
-        personCreate = service_manager.person_service.create_person(data, get_jwt_identity())
+        personCreate = service_manager.person_service.create_person(data, 'root')#get_jwt_identity())
         if personCreate is None:
             return jsonify({'error': 'Internal Server'}), 500   
         

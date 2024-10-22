@@ -2,10 +2,11 @@ from ..database import db
 
 class Person(db.Model):
 
-    __tablename__ = 'persons'  # Nombre de la tabla
+    __tablename__ = 'person'  # Nombre de la tabla
     __table_args__ = {'schema': 'ap_general'}  # Especifica el esquema
-
+    
     id_person = db.Column(db.String(50), primary_key=True)    
+    Id_company = db.Column(db.String(15), db.ForeignKey('ap_general.company.Id_company'), nullable=False)
     name = db.Column(db.String(150), nullable=False)
     lastname = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)

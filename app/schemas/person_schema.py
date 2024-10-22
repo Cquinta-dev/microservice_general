@@ -1,4 +1,5 @@
 expected_fields_create = {
+    "idComercio",
     "id",
     "nombres",
     "apellidos",

@@ -8,10 +8,12 @@ class PersonService:
     def create_person(self, data, usr):
 
         new_person = Person (
+            Id_company = data['idComercio'],
             id_person = data['id'], 
             name = data['nombres'],
             lastname = data['apellidos'],
             email = data['correo'],
+            
             status_per = 'E',
             usr_create = usr,
             tim_create = datetime.now()
