@@ -11,5 +11,5 @@ expected_fields_update = {
     "nombres",
     "apellidos",
     "correo",
-    "estado"
+    "estadoPersona"
 }

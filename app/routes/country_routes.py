@@ -2,29 +2,79 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import Blueprint, jsonify, request
 from app.services import service_manager
 from ..schemas.country_schema import expected_fields_create
+from ..schemas.country_schema import expected_fields_update
+from ..utils.constants import constants
 
 country_routes = Blueprint('country', __name__)
 
 #Method for create country.
 @country_routes.route('/createCountry',methods=['POST'])
-#@jwt_required()
+@jwt_required()
 def create_country():
 
-    try:        
-        data = request.get_json(force=True)
-        if data is None:
-            return jsonify({'error': 'No JSON data provided'}), 400
-        
-        missing_fields = expected_fields_create - data.keys()
-        if missing_fields:
-            return jsonify({'error': 'Missing fields', 'missing': list(missing_fields)}), 400
-        
-        countryCreate = service_manager.country_service.create_country(data, 'root')#get_jwt_identity())
-        if countryCreate is None:
-            return jsonify({'error': 'Internal Server'}), 500   
-        
-        return jsonify({'message': 'Country created'}), 201
+    data = request.get_json(force=True)
+    if data is None:
+        return jsonify({'error': constants.NOT_JSON}), 400
     
-    except Exception as e:
-        print(e)
-        return jsonify({'error': 'Internal Server'}), 500    
+    missing_fields = expected_fields_create - data.keys()
+    if missing_fields:
+        return jsonify({'error': constants.NOT_FIELDS, 'missing': list(missing_fields)}), 400
+    
+    createCountry = service_manager.country_service.create_country(data, get_jwt_identity())
+    if createCountry is None:
+        return jsonify({'error': constants.INTERNAL_ERROR}), 500   
+    
+    return jsonify({'message': 'Country created'}), 201
+
+
+#Method for get list to coutries.
+@country_routes.route('/allCoutries', methods=['GET'])
+@jwt_required()
+def get_all_countries():
+
+    allCoutries = service_manager.country_service.get_all_countries()
+    if allCoutries is None:
+        return jsonify({'error': constants.NOT_FOUND_LIST}), 404
+
+    return jsonify(allCoutries), 200    
+
+
+#Method for get one country.
+@country_routes.route('/getCountry', methods=['GET'])
+#@jwt_required()
+def get_country():
+
+    id = request.args.get('id')
+    if id is None: 
+        return jsonify({'error': constants.NOT_ID}), 400
+    
+    getCountry = service_manager.country_service.get_country(id)
+    if getCountry is None:
+        return jsonify({'error':'Country not found'}), 404
+        
+    return jsonify(getCountry), 200
+
+
+#Method for udpate country.
+@country_routes.route('/updateCountry', methods=['PUT'])
+@jwt_required()
+def update_country():    
+    
+    data = request.get_json(force=True)
+    if data is None:
+        return jsonify({'error': constants.NOT_JSON}), 400
+        
+    missing_fields = expected_fields_update - data.keys()
+    if missing_fields:
+        return jsonify({'error': constants.NOT_FIELDS, 'missing': list(missing_fields)}), 400
+
+    updateCountry = service_manager.country_service.update_country(data, get_jwt_identity())
+    if updateCountry is constants.NOT_FOUND:
+        return jsonify({'error':'Country not found'}), 404
+    
+    if updateCountry is None:
+        return jsonify({'error': constants.INTERNAL_ERROR}), 500
+    
+    return jsonify({'message': 'Country updated'}), 201
+
+    

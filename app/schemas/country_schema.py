@@ -6,3 +6,13 @@ expected_fields_create = {
     "capital",
     "postalCodigo"
 }
+
+expected_fields_update = {
+    "id",
+    "codigoDos",
+    "CodigoTres",
+    "pais",
+    "capital",
+    "postalCodigo",
+    "estadoPais"
+}

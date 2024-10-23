@@ -1,8 +1,18 @@
 expected_fields_create = {
     "id",
     "simboloMoneda",
-    "iso",
-    "iso_3",
+    "isoDos",
+    "isoTres",
     "moneda",
     "IdPais"
+}
+
+expected_fields_update = {
+    "id",
+    "simboloMoneda",
+    "isoDos",
+    "isoTres",
+    "moneda",
+    "IdPais",
+    "estadoMoneda"
 }

@@ -8,7 +8,7 @@ class Country(db.Model):
     codeNumeric = db.Column(db.String(3), primary_key=True)
     ISO2 = db.Column(db.String(2), nullable=False)
     ISO3 = db.Column(db.String(3), nullable=False)
-    nameContry = db.Column(db.String(128), nullable=False)
+    nameContry = db.Column(db.String(128), nullable=False, unique=True)
     capitalContry = db.Column(db.String(128), nullable=False)
     postalCode = db.Column(db.String(5), nullable=False)
 
