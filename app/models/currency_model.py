@@ -9,8 +9,8 @@ class Currency(db.Model):
     symbol = db.Column(db.String(2), nullable=False)
     ISO2 = db.Column(db.String(3), nullable=False)
     ISO3 = db.Column(db.String(3), nullable=False)
-    nameCurrency = db.Column(db.String(128), nullable=False)
-    codeNumeric = db.Column(db.String(3), db.ForeignKey('ap_general.country.codeNumeric'), nullable=False)
+    nameCurrency = db.Column(db.String(128), nullable=False, unique=True)
+    codeCountry = db.Column(db.String(3), db.ForeignKey('ap_general.country.codeCountry'), nullable=False)
     
     #columnas de auditoria.
     status_cur = db.Column(db.String(1), nullable=False)

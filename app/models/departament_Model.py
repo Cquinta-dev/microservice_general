@@ -6,10 +6,10 @@ class Departament(db.Model):
     __table_args__ = {'schema': 'ap_general'}
 
     codeDepartment = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nameDepartament = db.Column(db.String(128), nullable=False)
+    nameDepartament = db.Column(db.String(128), nullable=False, unique=True)
     headboardDepartament = db.Column(db.String(128), nullable=False)
     postalCode = db.Column(db.String(10))
-    codeNumeric = db.Column(db.String(3), db.ForeignKey('ap_general.country.codeNumeric'), nullable=False)
+    codeCountry = db.Column(db.String(3), db.ForeignKey('ap_general.country.codeCountry'), nullable=False)
 
     #columnas de auditoria.
     status_dep = db.Column(db.String(1), nullable=False)

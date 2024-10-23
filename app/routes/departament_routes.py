@@ -1,8 +1,8 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import Blueprint, jsonify, request
-from app.services import service_manager
 from ..schemas.departament_schema import expected_fields_create
 from ..schemas.departament_schema import expected_fields_update
+from ..services import service_manager
 from ..utils.constants import constants
 
 departament_routes = Blueprint('departament', __name__)
@@ -24,15 +24,15 @@ def create_departament():
     if createDepartament is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500   
     
-    return jsonify({'message': 'Departament created'}), 201
+    return jsonify({'message': createDepartament}), 201
     
 
 #Method for get list to depataments.
 @departament_routes.route('/allDepartaments', methods=['GET'])
 @jwt_required()
-def get_all_departaments():
+def get_departaments():
 
-    allDepartaments = service_manager.departament_service.get_all_departaments()
+    allDepartaments = service_manager.departament_service.get_departaments()
     if allDepartaments is None:
         return jsonify({'error': constants.NOT_FOUND_LIST}), 404
 
@@ -40,17 +40,17 @@ def get_all_departaments():
 
 
 #Method for get one departament.
-@departament_routes.route('/getDepartament', methods=['GET'])
+@departament_routes.route('/getComboDepartaments', methods=['GET'])
 @jwt_required()
-def get_departament():
+def get_combo_departament():
 
     id = request.args.get('id')
     if id is None: 
         return jsonify({'error': constants.NOT_ID}), 400    
     
-    getDepartament = service_manager.departament_service.get_departament(id)
+    getDepartament = service_manager.departament_service.get_combo_departament(id)
     if getDepartament is None:
-        return jsonify({'error':'Departament not found'}), 404
+        return jsonify({'error': constants.NOT_FOUND_LIST}), 404
 
     return jsonify(getDepartament), 200
 
@@ -70,9 +70,9 @@ def update_departament():
 
     updateDepartament = service_manager.departament_service.update_departament(data, get_jwt_identity())
     if updateDepartament is constants.NOT_FOUND:
-        return jsonify({'error':'Departament not found'}), 404
+        return jsonify({'error': updateDepartament + data['departamento']}), 404
     
     if updateDepartament is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500
             
-    return jsonify({'message': 'Departament updated'}), 201
+    return jsonify({'message': updateDepartament}), 201

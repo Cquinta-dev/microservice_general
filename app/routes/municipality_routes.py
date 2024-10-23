@@ -1,8 +1,8 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import Blueprint, jsonify, request
-from app.services import service_manager
 from ..schemas.municipality_schema import expected_fields_create
 from ..schemas.municipality_schema import expected_fields_update
+from ..services import service_manager
 from ..utils.constants import constants
 
 municipality_routes = Blueprint('municipality', __name__)
@@ -20,19 +20,19 @@ def create_municipality():
     if missing_fields:
         return jsonify({'error': constants.NOT_FIELDS, 'missing': list(missing_fields)}), 400
     
-    municipalityCreate = service_manager.municipality_service.create_municipality(data, get_jwt_identity())
-    if municipalityCreate is None:
+    createMunicipality = service_manager.municipality_service.create_municipality(data, get_jwt_identity())
+    if createMunicipality is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500   
     
-    return jsonify({'message': 'Municipality created'}), 201
+    return jsonify({'message': createMunicipality}), 201
     
 
 #Method for get list to municipalities.
 @municipality_routes.route('/allMunicipalities', methods=['GET'])
 @jwt_required()
-def get_all_municipalities():
+def get_municipalities():
 
-    allMunicipalities = service_manager.municipality_service.get_all_municipalities()
+    allMunicipalities = service_manager.municipality_service.get_municipalities()
     if allMunicipalities is None:
         return jsonify({'error': constants.NOT_FOUND_LIST}), 404
 
@@ -40,17 +40,17 @@ def get_all_municipalities():
 
 
 #Method for get one municipality.
-@municipality_routes.route('/getMunicipality', methods=['GET'])
+@municipality_routes.route('/getComboMunicipalities', methods=['GET'])
 @jwt_required()
-def get_municipality():
+def get_combo_municipalities():
 
     id = request.args.get('id')
     if id is None: 
         return jsonify({'error': constants.NOT_ID}), 400    
     
-    getMunicipality = service_manager.municipality_service.get_municipality(id)
+    getMunicipality = service_manager.municipality_service.get_combo_municipalities(id)
     if getMunicipality is None:
-        return jsonify({'error':'Municipality not found'}), 404
+        return jsonify({'error': constants.NOT_FOUND_LIST}), 404
     
     return jsonify(getMunicipality), 200
 
@@ -70,9 +70,9 @@ def update_municipality():
 
     updateMunicipality = service_manager.municipality_service.update_municipality(data, get_jwt_identity())
     if updateMunicipality is constants.NOT_FOUND:
-        return jsonify({'error':'Municipality not found'}), 404
+        return jsonify({'error': updateMunicipality + data['muncipalidad']}), 404
     
     if updateMunicipality is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500    
         
-    return jsonify({'message': 'Municipality updated'}), 201
+    return jsonify({'message': updateMunicipality}), 201

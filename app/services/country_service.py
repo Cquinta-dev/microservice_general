@@ -1,43 +1,48 @@
-from app.models.country_model import Country
-from app.database import db
-from datetime import datetime
+from ..utils.validate_registers import ValidateRegisters
+from ..models.country_model import Country
 from ..utils.constants import constants
+from ..database import db
+from datetime import datetime
+
 
 class CountryService:
 
 
     def create_country(self, data, usr):
         try:
-            new_country = Country (
-                codeNumeric = data['id'],
-                ISO2 = data['codigoDos'], 
-                ISO3 = data['CodigoTres'], 
-                nameContry = data['pais'],
-                capitalContry = data['capital'],
-                postalCode = data['postalCodigo'],
+            if ValidateRegisters.country_exists(data['id']):
+                return f"{constants.EXIST}{data['pais']}"
+            else:
+                new_country = Country (
+                    codeCountry = data['id'],
+                    ISO2 = data['codigoDos'], 
+                    ISO3 = data['CodigoTres'], 
+                    nameContry = data['pais'],
+                    capitalContry = data['capital'],
+                    postalCode = data['postalCodigo'],
 
-                status_cou = 'E',
-                usr_create = usr,
-                tim_create = datetime.now()
-            )
-            
-            db.session.add(new_country)
-            db.session.commit()
+                    status_cou = constants.ENABLED,
+                    usr_create = usr,
+                    tim_create = datetime.now()
+                )
+                
+                db.session.add(new_country)
+                db.session.commit()
 
-            return new_country 
+                return f"{constants.CREATE}Country {data['pais']}"
                
         except Exception as e:
             print('---------------> ERROR create_country: ---------------> ', e)
             return None
 
 
-    def get_all_countries(self):
+    def get_countries(self):
         read_countries = Country.query.all()
         if read_countries:
             data = {
                 'paises': [
                     {
-                        'id': p.codeNumeric,
+                        'id': p.codeCountry,
                         'codigoDos': p.ISO2,
                         'CodigoTres': p.ISO3,
                         'pais': p.nameContry,
@@ -48,24 +53,25 @@ class CountryService:
                 ]
             }
         else:
+
             return None
 
         return data    
 
 
-    def get_country(self, id):
-        read_country = Country.query.filter_by(codeNumeric=id).first()
-        if read_country:
+    def get_combo_countries(self):
+        read_countries = Country.query.filter(Country.status_cou == constants.ENABLED)
+        if read_countries:
             data = {
-                'id': id,
-                'codigoDos': read_country.ISO2,
-                'CodigoTres': read_country.ISO3,
-                'pais': read_country.nameContry,
-                'capital': read_country.capitalContry,
-                'postalCodigo': read_country.postalCode,
-                'estadoPais': read_country.status_cou
+                'paises': [
+                    {
+                        'id': p.codeCountry,
+                        'pais': p.nameContry                        
+                    } for p in read_countries
+                ]
             }
         else:
+            
             return None
 
         return data    
@@ -73,7 +79,7 @@ class CountryService:
 
     def update_country(self, data, usr):
         try:        
-            refresh_country = Country.query.filter_by(codeNumeric=data['id']).first()
+            refresh_country = Country.query.filter_by(codeCountry=data['id']).first()
             if refresh_country:            
                 if data['codigoDos']: 
                     refresh_country.ISO2 = data['codigoDos']
@@ -97,7 +103,7 @@ class CountryService:
                 refresh_country.tim_update = datetime.now()            
                 db.session.commit()
 
-                return refresh_country
+                return f"{constants.UPDATE}Country {data['pais']}"
             
             return constants.NOT_FOUND
            

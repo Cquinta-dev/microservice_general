@@ -6,7 +6,7 @@ class Municipality(db.Model):
     __table_args__ = {'schema': 'ap_general'}
     
     codeMunicipality = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nameMunicipality = db.Column(db.String(128), nullable=False)
+    nameMunicipality = db.Column(db.String(128), nullable=False, unique=True)
     postalCode = db.Column(db.String(10))
     codeDepartment = db.Column(db.Integer, db.ForeignKey('ap_general.departament.codeDepartment'), nullable=False)
 

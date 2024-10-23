@@ -6,7 +6,7 @@ expected_fields_create = {
 }
 
 expected_fields_update = {
-    "id"
+    "id",
     "departamento",
     "cabecera",
     "postalCodigo",

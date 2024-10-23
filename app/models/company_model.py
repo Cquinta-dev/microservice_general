@@ -6,12 +6,12 @@ class Company(db.Model):
     __table_args__ = {'schema': 'ap_general'}
 
     Id_company = db.Column(db.String(15), primary_key=True)
-    nameCompany = db.Column(db.String(128), nullable=False)
+    nameCompany = db.Column(db.String(128), nullable=False, unique=True)
     address = db.Column(db.String(250), nullable=False)
     phone = db.Column(db.String(15), nullable=False)
     aditionalPhone = db.Column(db.String(15))
     representative = db.Column(db.String(250), nullable=False)
-    codeNumeric = db.Column(db.String(3), db.ForeignKey('ap_general.country.codeNumeric'), nullable=False)
+    codeCountry = db.Column(db.String(3), db.ForeignKey('ap_general.country.codeCountry'), nullable=False)
     codeDepartment = db.Column(db.Integer, db.ForeignKey('ap_general.departament.codeDepartment'), nullable=False)
     codeMunicipality = db.Column(db.Integer, db.ForeignKey('ap_general.municipality.codeMunicipality'), nullable=False)    
 

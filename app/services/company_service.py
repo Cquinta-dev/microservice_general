@@ -15,7 +15,7 @@ class CompanyService:
                 phone = data['TelefonoPbx'],
                 aditionalPhone = data['otroTelefonoPbx'],
                 representative = data['representanteLegal'],
-                codeNumeric = data['IdPais'],
+                codeCountry = data['IdPais'],
                 codeDepartment = data['IdDepartamento'],
                 codeMunicipality = data['IdMunicipalidad'],
 
@@ -46,7 +46,7 @@ class CompanyService:
                         'TelefonoPbx': p.phone,
                         'otroTelefonoPbx': p.aditionalPhone,
                         'representanteLegal': p.representative,
-                        'IdPais': p.codeNumeric,
+                        'IdPais': p.codeCountry,
                         'IdDepartamento': p.codeDepartment,
                         'IdMunicipalidad': p.codeMunicipality,
                         'estadoEmpresa': p.status_com
@@ -69,7 +69,7 @@ class CompanyService:
                 'TelefonoPbx': read_company.phone,
                 'otroTelefonoPbx': read_company.aditionalPhone,
                 'representanteLegal': read_company.representative,
-                'IdPais': read_company.codeNumeric,
+                'IdPais': read_company.codeCountry,
                 'IdDepartamento': read_company.codeDepartment,
                 'IdMunicipalidad': read_company.codeMunicipality,
                 'estadoEmpresa': read_company.status_com
@@ -100,7 +100,7 @@ class CompanyService:
                     refresh_company.representative = data['representanteLegal']
 
                 if data['IdPais']:
-                    refresh_company.codeNumeric = data['IdPais']
+                    refresh_company.codeCountry = data['IdPais']
 
                 if data['IdDepartamento']:
                     refresh_company.codeDepartment = data['IdDepartamento']

@@ -1,8 +1,8 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import Blueprint, jsonify, request
-from app.services import service_manager
 from ..schemas.country_schema import expected_fields_create
 from ..schemas.country_schema import expected_fields_update
+from ..services import service_manager
 from ..utils.constants import constants
 
 country_routes = Blueprint('country', __name__)
@@ -24,35 +24,31 @@ def create_country():
     if createCountry is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500   
     
-    return jsonify({'message': 'Country created'}), 201
+    return jsonify({'message': createCountry}), 201
 
 
 #Method for get list to coutries.
 @country_routes.route('/allCoutries', methods=['GET'])
 @jwt_required()
-def get_all_countries():
+def get_countries():
 
-    allCoutries = service_manager.country_service.get_all_countries()
+    allCoutries = service_manager.country_service.get_countries()
     if allCoutries is None:
         return jsonify({'error': constants.NOT_FOUND_LIST}), 404
 
     return jsonify(allCoutries), 200    
 
 
-#Method for get one country.
-@country_routes.route('/getCountry', methods=['GET'])
-#@jwt_required()
-def get_country():
+#Method for get enabled country for combo.
+@country_routes.route('/getComboCountries', methods=['GET'])
+@jwt_required()
+def get_combo_countries():
 
-    id = request.args.get('id')
-    if id is None: 
-        return jsonify({'error': constants.NOT_ID}), 400
-    
-    getCountry = service_manager.country_service.get_country(id)
-    if getCountry is None:
-        return jsonify({'error':'Country not found'}), 404
+    getComboCountry = service_manager.country_service.get_combo_countries()
+    if getComboCountry is None:
+        return jsonify({'error': constants.NOT_FOUND_LIST}), 404
         
-    return jsonify(getCountry), 200
+    return jsonify(getComboCountry), 200
 
 
 #Method for udpate country.
@@ -70,11 +66,9 @@ def update_country():
 
     updateCountry = service_manager.country_service.update_country(data, get_jwt_identity())
     if updateCountry is constants.NOT_FOUND:
-        return jsonify({'error':'Country not found'}), 404
+        return jsonify({'error': updateCountry + data['pais']}), 404
     
     if updateCountry is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500
     
-    return jsonify({'message': 'Country updated'}), 201
-
-    
+    return jsonify({'message': updateCountry}), 201
