@@ -1,5 +1,5 @@
 from ..utils.validate_registers import ValidateRegisters
-from ..models.countryModel import Country
+from ..models.country_model import Country
 from ..utils.constants import constants
 from ..database import db
 from datetime import datetime
