@@ -1,4 +1,4 @@
-from ..models.municipality_model import Municipality
+from ..models.municipalityModel import Municipality
 from ..utils.validate_registers import ValidateRegisters
 from ..utils.constants import constants
 from ..database import db

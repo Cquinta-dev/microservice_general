@@ -1,8 +1,8 @@
 from sqlalchemy import exists
-from ..models.municipality_model import Municipality
-from ..models.departament_model import Departament
+from ..models.municipalityModel import Municipality
+from ..models.departamentModel import Departament
 from ..models.currency_model import Currency
-from ..models.country_model import Country
+from ..models.countryModel import Country
 from ..utils.constants import constants
 from ..database import db 
 

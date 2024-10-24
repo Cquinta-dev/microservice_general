@@ -1,4 +1,4 @@
-from ..models.departament_model import Departament
+from ..models.departamentModel import Departament
 from ..utils.validate_registers import ValidateRegisters
 from ..utils.constants import constants
 from ..database import db
