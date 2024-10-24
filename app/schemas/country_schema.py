@@ -1,5 +1,5 @@
 expected_fields_create = {
-    "id",
+    "codigoNumerico",
     "codigoDos",
     "CodigoTres",
     "pais",
@@ -9,6 +9,7 @@ expected_fields_create = {
 
 expected_fields_update = {
     "id",
+    "codigoNumerico",
     "codigoDos",
     "CodigoTres",
     "pais",

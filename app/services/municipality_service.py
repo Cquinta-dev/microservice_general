@@ -13,14 +13,14 @@ class MunicipalityService:
             if ValidateRegister.municipality_exists(data['muncipalidad']):
                 return f"{constants.EXIST}{data['muncipalidad']}"
             else:
-                validate = ValidateRegister.validate_departament_status(data['IdDepartamento'])
+                validate = ValidateRegister.validate_departament_status(data['codDepartamento'])
                 if validate == constants.Ok:    
                     new_municipality = Municipality (
                         nameMunicipality = data['muncipalidad'],
                         postalCode = data['postalCodigo'],
-                        codeDepartment = data['IdDepartamento'],
+                        idDepartment = data['codDepartamento'],
 
-                        status_mun = constants.ENABLED,
+                        status = constants.ENABLED,
                         usr_create = usr,
                         tim_create = datetime.now()
                     )
@@ -45,11 +45,11 @@ class MunicipalityService:
             data = {
                 'municipalidades': [
                     {
-                        'id': p.codeMunicipality,
+                        'id': p.idMunicipality,
                         'muncipalidad': p.nameMunicipality,
                         'postalCodigo': p.postalCode,
-                        'IdDepartamento': p.codeDepartment,
-                        'estadoMunicipio': p.status_mun
+                        'codDepartamento': p.idDepartment,
+                        'estadoMunicipio': p.status
                     } for p in read_municipalities
                 ]
             }
@@ -61,8 +61,8 @@ class MunicipalityService:
 
     def get_combo_municipalities(self, id):
         read_municipalities = Municipality.query.filter(
-                                Municipality.codeDepartment == id,
-                                Municipality.status_mun == constants.ENABLED)
+                                Municipality.idDepartment == id,
+                                Municipality.status == constants.ENABLED)
         if read_municipalities.count() == 0:
             return None
         
@@ -70,11 +70,8 @@ class MunicipalityService:
             data = {
                 'municipalidades': [
                     {
-                        'id': p.codeMunicipality,
-                        'muncipalidad': p.nameMunicipality,
-                        'postalCodigo': p.postalCode,
-                        'IdDepartamento': p.codeDepartment,
-                        'estadoMunicipio': p.status_mun
+                        'id': p.idMunicipality,
+                        'muncipalidad': p.nameMunicipality
                     } for p in read_municipalities
                 ]
             }
@@ -84,9 +81,9 @@ class MunicipalityService:
 
     def update_municipality(self, data, usr):
         try: 
-            refresh_municipality = Municipality.query.filter_by(codeMunicipality=data['id']).first()
+            refresh_municipality = Municipality.query.filter_by(idMunicipality=data['id']).first()
             if refresh_municipality:    
-                validate = ValidateRegister.validate_departament(data['IdDepartamento'])   
+                validate = ValidateRegister.validate_departament_status(data['codDepartamento'])   
                 if validate == constants.Ok:             
                     if data['muncipalidad']: 
                         refresh_municipality.nameMunicipality = data['muncipalidad']
@@ -94,11 +91,11 @@ class MunicipalityService:
                     if data['postalCodigo']:
                         refresh_municipality.postalCode = data['postalCodigo']
                     
-                    if data['IdDepartamento']:
-                        refresh_municipality.codeDepartment = data['IdDepartamento']
+                    if data['codDepartamento']:
+                        refresh_municipality.idDepartment = data['codDepartamento']
 
                     if data['estadoMunicipio']:
-                        refresh_municipality.status_mun = data['estadoMunicipio']
+                        refresh_municipality.status = data['estadoMunicipio']
 
                     refresh_municipality.usr_update = usr
                     refresh_municipality.tim_update = datetime.now()            

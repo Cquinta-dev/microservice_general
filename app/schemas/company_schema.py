@@ -1,24 +1,25 @@
 expected_fields_create = {
-    "id",
+    "identificacion",
     "nombreComercio",
     "direccionComercio",
-    "TelefonoPbx",
+    "telefonoPbx",
     "otroTelefonoPbx",
     "representanteLegal",
-    "IdPais",
-    "IdDepartamento",
-    "IdMunicipalidad"
+    "codPais",
+    "codDepartamento",
+    "codMunicipalidad"
 }
 
 expected_fields_update = {
     "id",
+    "identificacion",
     "nombreComercio",
     "direccionComercio",
-    "TelefonoPbx",
+    "telefonoPbx",
     "otroTelefonoPbx",
     "representanteLegal",
-    "IdPais",
-    "IdDepartamento",
-    "IdMunicipalidad",
+    "codPais",
+    "codDepartamento",
+    "codMunicipalidad",
     "estadoEmpresa"
 }

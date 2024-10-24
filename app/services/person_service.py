@@ -10,19 +10,19 @@ class PersonService:
 
     def create_person(self, data, usr):
         try:
-            if ValidateRegister.person_exists(data['idComercio'], data['id']):
+            if ValidateRegister.person_exists(data['codComercio'], data['identificacion']):
                 return f"{constants.EXIST}{data['nombres'], data['apellidos']}"
             else:
-                validate = ValidateRegister.validate_company_status(data['idComercio'])
+                validate = ValidateRegister.validate_company_status(data['codComercio'])
                 if validate == constants.Ok:                
-                    new_person = Person (
-                        Id_company = data['idComercio'],
-                        id_person = data['id'], 
+                    new_person = Person (                    
+                        idCompany = data['codComercio'],
+                        codePerson = data['identificacion'], 
                         name = data['nombres'],
                         lastname = data['apellidos'],
                         email = data['correo'],
                         
-                        status_per = constants.ENABLED,
+                        status = constants.ENABLED,
                         usr_create = usr,
                         tim_create = datetime.now()
                     )
@@ -47,11 +47,13 @@ class PersonService:
             data = {
                 'personas': [
                     {
-                        'id': p.id_person,
+                        'id': p.idPerson,
+                        'identificacion': p.codePerson,
                         'nombres': p.name,
                         'apellidos': p.lastname,
                         'correo': p.email,
-                        'estadoPersona': p.status_per
+                        'codComercio': p.idCompany,
+                        'estadoPersona': p.status
                     } for p in read_persons
                 ]
             }
@@ -63,8 +65,8 @@ class PersonService:
 
     def get_combo_persons(self, id):
         read_persons = Person.query.filter(
-                        Person.Id_company == id,
-                        Person.status_per == constants.ENABLED)
+                        Person.idCompany == id,
+                        Person.status == constants.ENABLED)
         if read_persons.count() == 0:
             return None
 
@@ -72,7 +74,7 @@ class PersonService:
             data = {
                 'personas': [
                     {
-                        'id': p.id_person,
+                        'id': p.idPerson,
                         'nombres': p.name,
                         'apellidos': p.lastname                        
                     } for p in read_persons
@@ -84,8 +86,11 @@ class PersonService:
 
     def update_person(self, data, usr):
         try:        
-            refresh_person = Person.query.filter_by(id_person=data['id']).first()
+            refresh_person = Person.query.filter_by(idPerson=data['id']).first()
             if refresh_person:   
+                if data['identificacion']: 
+                    refresh_person.codePerson = data['identificacion']
+
                 if data['nombres']: 
                     refresh_person.name = data['nombres']
                 
@@ -94,9 +99,12 @@ class PersonService:
                 
                 if data['correo']:
                     refresh_person.email = data['correo']
-
+                
                 if data['estadoPersona']:
-                    refresh_person.status_per = data['estadoPersona']
+                    refresh_person.status = data['estadoPersona']
+
+                if data['codComercio']:
+                    refresh_person.idCompany = data['codComercio']
 
                 refresh_person.usr_update = usr
                 refresh_person.tim_update = datetime.now()            

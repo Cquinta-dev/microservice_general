@@ -13,15 +13,15 @@ class DepartamentService:
             if ValidateRegister.departament_exists(data['departamento']):
                 return f"{constants.EXIST}{data['departamento']}"
             else:
-                validate = ValidateRegister.validate_country_status(data['IdPais'])
+                validate = ValidateRegister.validate_country_status(data['codPais'])
                 if validate == constants.Ok:
                     new_departament = Departament (
                         nameDepartament = data['departamento'],
                         headboardDepartament = data['cabecera'],
                         postalCode = data['postalCodigo'],
-                        codeCountry = data['IdPais'],
+                        idCountry = data['codPais'],
 
-                        status_dep = constants.ENABLED,
+                        status = constants.ENABLED,
                         usr_create = usr,
                         tim_create = datetime.now()
                     )            
@@ -45,12 +45,12 @@ class DepartamentService:
             data = {
                 'departamentos': [
                     {
-                        'id': p.codeDepartment,
+                        'id': p.idDepartment,
                         'departamento': p.nameDepartament,
                         'cabecera': p.headboardDepartament,
                         'postalCodigo': p.postalCode,
-                        'IdPais': p.codeCountry,
-                        'estadoDepartamento': p.status_dep,
+                        'codPais': p.idCountry,
+                        'estadoDepartamento': p.status,
                     } for p in read_departaments
                 ]
             }
@@ -63,8 +63,8 @@ class DepartamentService:
 
     def get_combo_departament(self, id):
         read_departaments = Departament.query.filter(
-                                Departament.codeCountry == id,
-                                Departament.status_dep == constants.ENABLED)
+                                Departament.idCountry == id,
+                                Departament.status == constants.ENABLED)
         if read_departaments.count() == 0:
             return None
         
@@ -72,7 +72,7 @@ class DepartamentService:
             data = {
                 'departamentos': [
                     {
-                        'id': p.codeDepartment,
+                        'id': p.idDepartment,
                         'departamento': p.nameDepartament
                     } for p in read_departaments
                 ]
@@ -83,9 +83,9 @@ class DepartamentService:
 
     def update_departament(self, data, usr):
         try:
-            refresh_departament = Departament.query.filter_by(codeDepartment=data['id']).first()
+            refresh_departament = Departament.query.filter_by(idDepartment=data['id']).first()
             if refresh_departament:
-                validate = ValidateRegister.validate_country(data['IdPais'])   
+                validate = ValidateRegister.validate_country_status(data['codPais'])   
                 if validate == constants.Ok:      
                     if data['departamento']: 
                         refresh_departament.nameDepartament = data['departamento']
@@ -96,11 +96,11 @@ class DepartamentService:
                     if data['postalCodigo']:
                         refresh_departament.postalCode = data['postalCodigo']
 
-                    if data['IdPais']:
-                        refresh_departament.codeCountry = data['IdPais']
+                    if data['codPais']:
+                        refresh_departament.idCountry = data['codPais']
 
                     if data['estadoDepartamento']:
-                        refresh_departament.status_dep = data['estadoDepartamento']
+                        refresh_departament.status = data['estadoDepartamento']
 
                     refresh_departament.usr_update = usr
                     refresh_departament.tim_update = datetime.now()            

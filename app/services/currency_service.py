@@ -13,17 +13,17 @@ class CurrencyService:
             if ValidateRegister.currency_exists(data['moneda']):
                 return f"{constants.EXIST}{data['moneda']}"
             else:                
-                validate = ValidateRegister.validate_country_status(data['IdPais'])
+                validate = ValidateRegister.validate_country_status(data['codPais'])
                 if validate == constants.Ok:
                     new_currency = Currency (
-                        codeCurrency = data['id'], 
+                        codeCurrency = data['codModeda'], 
                         symbol = data['simboloMoneda'],
                         ISO2 = data['isoDos'],
                         ISO3 = data['isoTres'],
                         nameCurrency = data['moneda'],
-                        codeCountry = data['IdPais'],
+                        idCountry = data['codPais'],
 
-                        status_cur = constants.ENABLED,
+                        status = constants.ENABLED,
                         usr_create = usr,
                         tim_create = datetime.now()
                     )
@@ -48,13 +48,14 @@ class CurrencyService:
             data = {
                 'monedas': [
                     {
-                        'id': p.codeCurrency,
+                        'id': p.idCurrency,
+                        'codModeda': p.codeCurrency,
                         'simboloMoneda': p.symbol,
                         'isoDos': p.ISO2,
                         'isoTres': p.ISO3,
                         'moneda': p.nameCurrency,
-                        'IdPais': p.codeCountry,
-                        'estadoMoneda': p.status_cur
+                        'codPais': p.idCountry,
+                        'estadoMoneda': p.status
                     } for p in read_currencies
                 ]
             }
@@ -66,8 +67,8 @@ class CurrencyService:
 
     def get_combo_currencies(self, id):
         read_currencies = Currency.query.filter(
-                            Currency.codeCountry == id,
-                            Currency.status_cur == constants.ENABLED)
+                            Currency.idCountry == id,
+                            Currency.status == constants.ENABLED)
         if read_currencies.count() == 0:
             return None
         
@@ -75,13 +76,8 @@ class CurrencyService:
             data = {
                 'monedas': [
                     {
-                        'id': p.codeCurrency,
-                        'simboloMoneda': p.symbol,
-                        'isoDos': p.ISO2,
-                        'isoTres': p.ISO3,
+                        'id': p.idCurrency,
                         'moneda': p.nameCurrency,
-                        'IdPais': p.codeCountry,
-                        'estadoMoneda': p.status_cur
                     } for p in read_currencies
                 ]
             }
@@ -91,10 +87,13 @@ class CurrencyService:
 
     def update_currency(self, data, usr):
         try:
-            refresh_currency = Currency.query.filter_by(codeCurrency=data['id']).first()
+            refresh_currency = Currency.query.filter_by(idCurrency=data['id']).first()
             if refresh_currency:                
-                validate = ValidateRegister.validate_country_status(data['IdPais'])
+                validate = ValidateRegister.validate_country_status(data['codPais'])
                 if validate == constants.Ok:
+                    if data['codModeda']: 
+                        refresh_currency.codeCurrency = data['codModeda']
+
                     if data['simboloMoneda']: 
                         refresh_currency.symbol = data['simboloMoneda']
                     
@@ -107,11 +106,11 @@ class CurrencyService:
                     if data['moneda']:
                         refresh_currency.nameCurrency = data['moneda']
 
-                    if data['IdPais']:
-                        refresh_currency.codeCountry = data['IdPais']
+                    if data['codPais']:
+                        refresh_currency.idCountry = data['codPais']
                     
                     if data['estadoMoneda']:
-                        refresh_currency.status_cur = data['estadoMoneda']
+                        refresh_currency.status = data['estadoMoneda']
 
                     refresh_currency.usr_update = usr
                     refresh_currency.tim_update = datetime.now()            

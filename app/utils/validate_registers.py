@@ -17,9 +17,9 @@ class ValidateRegister:
 
 
     def validate_country_status(id):
-        search_country = Country.query.filter_by(codeCountry=id).first()
+        search_country = Country.query.filter_by(idCountry=id).first()
         if search_country: 
-            if search_country.status_cou == constants.ENABLED:            
+            if search_country.status == constants.ENABLED:            
                 return constants.Ok
             
             return f"Country {search_country.nameContry} {constants.MESSAGE_DISABLED}" 
@@ -32,9 +32,9 @@ class ValidateRegister:
     
 
     def validate_departament_status(id):
-        search_departament = Departament.query.filter_by(codeDepartment=id).first()
+        search_departament = Departament.query.filter_by(idDepartment=id).first()
         if search_departament: 
-            if search_departament.status_dep == constants.ENABLED:            
+            if search_departament.status == constants.ENABLED:            
                 return constants.Ok
             
             return f"Departament {search_departament.nameDepartament} {constants.MESSAGE_DISABLED}" 
@@ -47,9 +47,9 @@ class ValidateRegister:
     
 
     def validate_municipality_status(id):
-        search_municipality = Municipality.query.filter_by(codeMunicipality=id).first()
+        search_municipality = Municipality.query.filter_by(idMunicipality=id).first()
         if search_municipality: 
-            if search_municipality.status_mun == constants.ENABLED:            
+            if search_municipality.status == constants.ENABLED:            
                 return constants.Ok
             
             return f"Municipality {search_municipality.nameMunicipality} {constants.MESSAGE_DISABLED}" 
@@ -57,14 +57,14 @@ class ValidateRegister:
         return f"{constants.NOT_EXIST} Municipality {id}"
 
 
-    def company_exists(Id_company):
-        return db.session.query(exists().where(Company.Id_company == Id_company)).scalar()
+    def company_exists(id):
+        return db.session.query(exists().where(Company.codeCompany == id)).scalar()
     
 
-    def validate_company_status(Id):
-        search_company = Company.query.filter_by(Id_company=Id).first()
+    def validate_company_status(id):
+        search_company = Company.query.filter_by(idCompany=id).first()
         if search_company: 
-            if search_company.status_com == constants.ENABLED:            
+            if search_company.status == constants.ENABLED:            
                 return constants.Ok
             
             return f"Company {search_company.nameCompany} {constants.MESSAGE_DISABLED}" 
@@ -76,5 +76,5 @@ class ValidateRegister:
         return db.session.query(exists().where(Currency.nameCurrency == nameCurrency)).scalar()
     
 
-    def person_exists(idPeson, idCompany):
-        return db.session.query(exists().where(Person.id_person == idPeson, Person.Id_company == idCompany)).scalar()
+    def person_exists(idCompany, codePerson):
+        return db.session.query(exists().where(Person.idCompany == idCompany, Person.codePerson == codePerson)).scalar()

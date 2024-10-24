@@ -1,13 +1,13 @@
 expected_fields_create = {
     "muncipalidad",
     "postalCodigo",
-    "IdDepartamento"
+    "codDepartamento"
 }
 
 expected_fields_update = {
     "id",
     "muncipalidad",
     "postalCodigo",
-    "IdDepartamento",
+    "codDepartamento",
     "estadoMunicipio"
 }

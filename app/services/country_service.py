@@ -10,18 +10,18 @@ class CountryService:
 
     def create_country(self, data, usr):
         try:
-            if ValidateRegister.country_exists(data['id']):
+            if ValidateRegister.country_exists(data['codigoNumerico']):
                 return f"{constants.EXIST}{data['pais']}"
             else:
                 new_country = Country (
-                    codeCountry = data['id'],
+                    codeCountry = data['codigoNumerico'],
                     ISO2 = data['codigoDos'], 
                     ISO3 = data['CodigoTres'], 
                     nameContry = data['pais'],
                     capitalContry = data['capital'],
                     postalCode = data['postalCodigo'],
 
-                    status_cou = constants.ENABLED,
+                    status = constants.ENABLED,
                     usr_create = usr,
                     tim_create = datetime.now()
                 )
@@ -42,13 +42,14 @@ class CountryService:
             data = {
                 'paises': [
                     {
-                        'id': p.codeCountry,
+                        'id': p.idCountry,
+                        'codigoNumerico': p.codeCountry,
                         'codigoDos': p.ISO2,
                         'CodigoTres': p.ISO3,
                         'pais': p.nameContry,
                         'capital': p.capitalContry,
                         'postalCodigo': p.postalCode,
-                        'estadoPais': p.status_cou
+                        'estadoPais': p.status
                     } for p in read_countries
                 ]
             }
@@ -60,7 +61,7 @@ class CountryService:
 
 
     def get_combo_countries(self):
-        read_countries = Country.query.filter(Country.status_cou == constants.ENABLED)
+        read_countries = Country.query.filter(Country.status == constants.ENABLED)
         if read_countries.count() == 0:
             return None
         
@@ -68,7 +69,7 @@ class CountryService:
             data = {
                 'paises': [
                     {
-                        'id': p.codeCountry,
+                        'id': p.idCountry,
                         'pais': p.nameContry                        
                     } for p in read_countries
                 ]
@@ -79,8 +80,11 @@ class CountryService:
 
     def update_country(self, data, usr):
         try:        
-            refresh_country = Country.query.filter_by(codeCountry=data['id']).first()
+            refresh_country = Country.query.filter_by(idCountry=data['id']).first()
             if refresh_country:            
+                if data['codigoNumerico']: 
+                    refresh_country.codeCountry = data['codigoNumerico']
+
                 if data['codigoDos']: 
                     refresh_country.ISO2 = data['codigoDos']
                 
@@ -97,7 +101,7 @@ class CountryService:
                     refresh_country.postalCode = data['postalCodigo']
 
                 if data['estadoPais']:
-                    refresh_country.status_cou = data['estadoPais']
+                    refresh_country.status = data['estadoPais']
 
                 refresh_country.usr_update = usr
                 refresh_country.tim_update = datetime.now()            

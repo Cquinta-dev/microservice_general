@@ -40,7 +40,7 @@ def get_currencies():
 
 
 #Method for get combo correncies.
-@currency_routes.route('/getCurrency', methods=['GET'])
+@currency_routes.route('/getComboCurrency', methods=['GET'])
 @jwt_required()
 def get_combo_currencies():
 

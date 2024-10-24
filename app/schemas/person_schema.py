@@ -1,6 +1,6 @@
 expected_fields_create = {
-    "idComercio",
-    "id",
+    "codComercio",
+    "identificacion",
     "nombres",
     "apellidos",
     "correo"
@@ -8,6 +8,8 @@ expected_fields_create = {
 
 expected_fields_update = {
     "id",
+    "codComercio",
+    "identificacion",
     "nombres",
     "apellidos",
     "correo",

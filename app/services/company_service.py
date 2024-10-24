@@ -10,27 +10,27 @@ class CompanyService:
 
     def create_company(self, data, usr):
         try:
-            if ValidateRegister.company_exists(data['id']):
+            if ValidateRegister.company_exists(data['identificacion']):
                 return f"{constants.EXIST}{data['nombreComercio']}"
             else:
-                validate = ValidateRegister.validate_country_status(data['IdPais'])
+                validate = ValidateRegister.validate_country_status(data['codPais'])
                 if validate == constants.Ok:
-                    validate = ValidateRegister.validate_departament_status(data['IdDepartamento'])
+                    validate = ValidateRegister.validate_departament_status(data['codDepartamento'])
                     if validate == constants.Ok:
-                        validate = ValidateRegister.validate_municipality_status(data['IdMunicipalidad'])
+                        validate = ValidateRegister.validate_municipality_status(data['codMunicipalidad'])
                         if validate == constants.Ok:
                             new_company = Company (
-                                Id_company = data['id'], 
+                                codeCompany = data['identificacion'], 
                                 nameCompany = data['nombreComercio'],
-                                address = data['direccionComercio'],
-                                phone = data['TelefonoPbx'],
+                                phone = data['telefonoPbx'],                                                            
                                 aditionalPhone = data['otroTelefonoPbx'],
                                 representative = data['representanteLegal'],
-                                codeCountry = data['IdPais'],
-                                codeDepartment = data['IdDepartamento'],
-                                codeMunicipality = data['IdMunicipalidad'],
+                                address = data['direccionComercio'],    
+                                idCountry = data['codPais'],
+                                idDepartment = data['codDepartamento'],
+                                idMunicipality = data['codMunicipalidad'],
 
-                                status_com = constants.ENABLED,
+                                status = constants.ENABLED,
                                 usr_create = usr,
                                 tim_create = datetime.now()
                             )
@@ -58,16 +58,17 @@ class CompanyService:
             data = {
                 'empresas': [
                     {
-                        'id': p.Id_company,
+                        'id': p.idCompany,
+                        'identificacion': p.codeCompany,
                         'nombreComercio': p.nameCompany,
                         'direccionComercio': p.address,
-                        'TelefonoPbx': p.phone,
+                        'telefonoPbx': p.phone,
                         'otroTelefonoPbx': p.aditionalPhone,
                         'representanteLegal': p.representative,
-                        'IdPais': p.codeCountry,
-                        'IdDepartamento': p.codeDepartment,
-                        'IdMunicipalidad': p.codeMunicipality,
-                        'estadoEmpresa': p.status_com
+                        'codPais': p.idCountry,
+                        'codDepartamento': p.idDepartment,
+                        'codMunicipalidad': p.idMunicipality,
+                        'estadoEmpresa': p.status
                     } for p in read_companies
                 ]
             }
@@ -78,7 +79,7 @@ class CompanyService:
     
     
     def get_combo_companies(self):
-        read_companies = Company.query.filter(Company.status_com == constants.ENABLED)
+        read_companies = Company.query.filter(Company.status == constants.ENABLED)
         if read_companies.count() == 0:
             return None
         
@@ -86,7 +87,7 @@ class CompanyService:
             data = {
                 'empresas': [
                     {
-                        'id': p.Id_company,
+                        'id': p.idCompany,
                         'nombreComercio': p.nameCompany
                     } for p in read_companies
                 ]
@@ -97,22 +98,22 @@ class CompanyService:
 
     def update_company(self, data, usr):
         try:            
-            refresh_company = Company.query.filter_by(Id_company=data['id']).first()
+            refresh_company = Company.query.filter_by(idCompany=data['id']).first()
             if refresh_company:     
-                validate = ValidateRegister.validate_country_status(data['IdPais'])
+                validate = ValidateRegister.validate_country_status(data['codPais'])
                 if validate == constants.Ok:
-                    validate = ValidateRegister.validate_departament_status(data['IdDepartamento'])
+                    validate = ValidateRegister.validate_departament_status(data['codDepartamento'])
                     if validate == constants.Ok:
-                        validate = ValidateRegister.validate_municipality_status(data['IdMunicipalidad'])
-                        if validate == constants.Ok:       
+                        validate = ValidateRegister.validate_municipality_status(data['codMunicipalidad'])
+                        if validate == constants.Ok:      
+                            if data['identificacion']: 
+                                refresh_company.codeCompany = data['identificacion']
+
                             if data['nombreComercio']: 
-                                refresh_company.nameCompany = data['nombreComercio']
+                                refresh_company.nameCompany = data['nombreComercio']                                                    
                             
-                            if data['direccionComercio']:
-                                refresh_company.address = data['direccionComercio']
-                            
-                            if data['TelefonoPbx']:
-                                refresh_company.phone = data['TelefonoPbx']
+                            if data['telefonoPbx']:
+                                refresh_company.phone = data['telefonoPbx']
 
                             if data['otroTelefonoPbx']:
                                 refresh_company.aditionalPhone = data['otroTelefonoPbx']
@@ -120,17 +121,20 @@ class CompanyService:
                             if data['representanteLegal']:
                                 refresh_company.representative = data['representanteLegal']
 
-                            if data['IdPais']:
-                                refresh_company.codeCountry = data['IdPais']
+                            if data['direccionComercio']:
+                                refresh_company.address = data['direccionComercio']
 
-                            if data['IdDepartamento']:
-                                refresh_company.codeDepartment = data['IdDepartamento']
+                            if data['codPais']:
+                                refresh_company.idCountry = data['codPais']
 
-                            if data['IdMunicipalidad']:
-                                refresh_company.codeMunicipality = data['IdMunicipalidad']
+                            if data['codDepartamento']:
+                                refresh_company.idDepartment = data['codDepartamento']
+
+                            if data['codMunicipalidad']:
+                                refresh_company.idMunicipality = data['codMunicipalidad']
 
                             if data['estadoEmpresa']:
-                                refresh_company.status_com = data['estadoEmpresa']
+                                refresh_company.status = data['estadoEmpresa']
 
                             refresh_company.usr_update = usr
                             refresh_company.tim_update = datetime.now()            
