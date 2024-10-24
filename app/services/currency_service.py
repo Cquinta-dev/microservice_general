@@ -1,5 +1,5 @@
+from ..utils.validate_registers import ValidateRegister
 from ..models.currency_model import Currency
-from ..utils.validate_registers import ValidateRegisters
 from ..utils.constants import constants
 from ..database import db
 from datetime import datetime
@@ -10,10 +10,10 @@ class CurrencyService:
 
     def create_currency(self, data, usr):
         try:
-            if ValidateRegisters.currency_exists(data['moneda']):
+            if ValidateRegister.currency_exists(data['moneda']):
                 return f"{constants.EXIST}{data['moneda']}"
-            else:
-                validate = ValidateRegisters.validate_country(data['idPais'])
+            else:                
+                validate = ValidateRegister.validate_country_status(data['IdPais'])
                 if validate == constants.Ok:
                     new_currency = Currency (
                         codeCurrency = data['id'], 
@@ -35,7 +35,7 @@ class CurrencyService:
                 
                 else:
 
-                    return validate    
+                    return validate
         
         except Exception as e:
             print('---------------> ERROR create_currency: ---------------> ', e)
@@ -68,6 +68,9 @@ class CurrencyService:
         read_currencies = Currency.query.filter(
                             Currency.codeCountry == id,
                             Currency.status_cur == constants.ENABLED)
+        if read_currencies.count() == 0:
+            return None
+        
         if read_currencies:
             data = {
                 'monedas': [
@@ -82,8 +85,6 @@ class CurrencyService:
                     } for p in read_currencies
                 ]
             }
-        else:
-            return None
 
         return data
     
@@ -92,7 +93,7 @@ class CurrencyService:
         try:
             refresh_currency = Currency.query.filter_by(codeCurrency=data['id']).first()
             if refresh_currency:                
-                validate = ValidateRegisters.validate_country(data['idPais'])
+                validate = ValidateRegister.validate_country_status(data['IdPais'])
                 if validate == constants.Ok:
                     if data['simboloMoneda']: 
                         refresh_currency.symbol = data['simboloMoneda']

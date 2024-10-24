@@ -1,5 +1,5 @@
+from ..utils.validate_registers import ValidateRegister
 from ..models.departament_model import Departament
-from ..utils.validate_registers import ValidateRegisters
 from ..utils.constants import constants
 from ..database import db
 from datetime import datetime
@@ -10,16 +10,16 @@ class DepartamentService:
 
     def create_departament(self, data, usr):
         try:            
-            if ValidateRegisters.departament_exists(data['departamento']):
+            if ValidateRegister.departament_exists(data['departamento']):
                 return f"{constants.EXIST}{data['departamento']}"
             else:
-                validate = ValidateRegisters.validate_country(data['idPais'])
+                validate = ValidateRegister.validate_country_status(data['IdPais'])
                 if validate == constants.Ok:
                     new_departament = Departament (
                         nameDepartament = data['departamento'],
                         headboardDepartament = data['cabecera'],
                         postalCode = data['postalCodigo'],
-                        codeCountry = data['idPais'],
+                        codeCountry = data['IdPais'],
 
                         status_dep = constants.ENABLED,
                         usr_create = usr,
@@ -49,7 +49,7 @@ class DepartamentService:
                         'departamento': p.nameDepartament,
                         'cabecera': p.headboardDepartament,
                         'postalCodigo': p.postalCode,
-                        'idPais': p.codeCountry,
+                        'IdPais': p.codeCountry,
                         'estadoDepartamento': p.status_dep,
                     } for p in read_departaments
                 ]
@@ -65,6 +65,9 @@ class DepartamentService:
         read_departaments = Departament.query.filter(
                                 Departament.codeCountry == id,
                                 Departament.status_dep == constants.ENABLED)
+        if read_departaments.count() == 0:
+            return None
+        
         if read_departaments:
             data = {
                 'departamentos': [
@@ -74,10 +77,7 @@ class DepartamentService:
                     } for p in read_departaments
                 ]
             }
-        else:
-
-            return None
-
+        
         return data
 
 
@@ -85,7 +85,7 @@ class DepartamentService:
         try:
             refresh_departament = Departament.query.filter_by(codeDepartment=data['id']).first()
             if refresh_departament:
-                validate = ValidateRegisters.validate_country(data['idPais'])   
+                validate = ValidateRegister.validate_country(data['IdPais'])   
                 if validate == constants.Ok:      
                     if data['departamento']: 
                         refresh_departament.nameDepartament = data['departamento']
@@ -96,8 +96,8 @@ class DepartamentService:
                     if data['postalCodigo']:
                         refresh_departament.postalCode = data['postalCodigo']
 
-                    if data['idPais']:
-                        refresh_departament.codeCountry = data['idPais']
+                    if data['IdPais']:
+                        refresh_departament.codeCountry = data['IdPais']
 
                     if data['estadoDepartamento']:
                         refresh_departament.status_dep = data['estadoDepartamento']

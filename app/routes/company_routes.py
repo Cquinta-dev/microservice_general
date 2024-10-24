@@ -7,7 +7,7 @@ from ..utils.constants import constants
 
 company_routes = Blueprint('company', __name__)
 
-#Method for create person.
+#Method for create company.
 @company_routes.route('/createCompany',methods=['POST'])
 @jwt_required()
 def create_company():
@@ -24,33 +24,29 @@ def create_company():
     if createCompany is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500   
     
-    return jsonify({'message': 'Company created'}), 201
+    return jsonify({'message': createCompany}), 201
 
 
-#Method for get list to companies.
+#Method for get list to company.
 @company_routes.route('/allCompanies', methods=['GET'])
 @jwt_required()
-def get_all_companies():
+def get_companies():
 
-    allCompanies = service_manager.company_service.get_all_companies()
+    allCompanies = service_manager.company_service.get_companies()
     if allCompanies is None:
         return jsonify({'error': constants.NOT_FOUND_LIST}), 404
 
     return jsonify(allCompanies), 200    
 
 
-#Method for get one company.
-@company_routes.route('/getCompany', methods=['GET'])
+#Method for get combo company.
+@company_routes.route('/getComboCompany', methods=['GET'])
 @jwt_required()
-def get_company():
+def get_combo_companies():
 
-    id = request.args.get('id')
-    if id is None: 
-        return jsonify({'error': constants.NOT_ID}), 400
-    
-    getCompany = service_manager.company_service.get_company(id)
+    getCompany = service_manager.company_service.get_combo_companies()
     if getCompany is None:
-        return jsonify({'error':'Company not found'}), 404
+        return jsonify({'error': constants.NOT_FOUND_LIST}), 404
     
     return jsonify(getCompany), 200
 
@@ -70,9 +66,9 @@ def update_company():
 
     updateCompany = service_manager.company_service.update_company(data, get_jwt_identity())
     if updateCompany is constants.NOT_FOUND:
-        return jsonify({'error':'Company not found'}), 404
+        return jsonify({'error': updateCompany + data['nombreComercio']}), 404
     
     if updateCompany is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500        
         
-    return jsonify({'message': 'Company updated'}), 201
+    return jsonify({'message': updateCompany}), 201

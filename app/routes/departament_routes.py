@@ -39,7 +39,7 @@ def get_departaments():
     return jsonify(allDepartaments), 200    
 
 
-#Method for get one departament.
+#Method for get combo departaments.
 @departament_routes.route('/getComboDepartaments', methods=['GET'])
 @jwt_required()
 def get_combo_departament():

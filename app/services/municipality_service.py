@@ -1,5 +1,5 @@
+from ..utils.validate_registers import ValidateRegister
 from ..models.municipality_model import Municipality
-from ..utils.validate_registers import ValidateRegisters
 from ..utils.constants import constants
 from ..database import db
 from datetime import datetime
@@ -10,10 +10,10 @@ class MunicipalityService:
 
     def create_municipality(self, data, usr):
         try:
-            if ValidateRegisters.municipality_exists(data['muncipalidad']):
+            if ValidateRegister.municipality_exists(data['muncipalidad']):
                 return f"{constants.EXIST}{data['muncipalidad']}"
             else:
-                validate = ValidateRegisters.validate_departament(data['IdDepartamento'])
+                validate = ValidateRegister.validate_departament_status(data['IdDepartamento'])
                 if validate == constants.Ok:    
                     new_municipality = Municipality (
                         nameMunicipality = data['muncipalidad'],
@@ -63,6 +63,9 @@ class MunicipalityService:
         read_municipalities = Municipality.query.filter(
                                 Municipality.codeDepartment == id,
                                 Municipality.status_mun == constants.ENABLED)
+        if read_municipalities.count() == 0:
+            return None
+        
         if read_municipalities:
             data = {
                 'municipalidades': [
@@ -75,9 +78,7 @@ class MunicipalityService:
                     } for p in read_municipalities
                 ]
             }
-        else:
-            return None
-
+                    
         return data
     
 
@@ -85,7 +86,7 @@ class MunicipalityService:
         try: 
             refresh_municipality = Municipality.query.filter_by(codeMunicipality=data['id']).first()
             if refresh_municipality:    
-                validate = ValidateRegisters.validate_departament(data['IdDepartamento'])   
+                validate = ValidateRegister.validate_departament(data['IdDepartamento'])   
                 if validate == constants.Ok:             
                     if data['muncipalidad']: 
                         refresh_municipality.nameMunicipality = data['muncipalidad']

@@ -2,7 +2,7 @@ expected_fields_create = {
     "departamento",
     "cabecera",
     "postalCodigo",
-    "idPais"
+    "IdPais"
 }
 
 expected_fields_update = {
@@ -10,6 +10,6 @@ expected_fields_update = {
     "departamento",
     "cabecera",
     "postalCodigo",
-    "idPais",
+    "IdPais",
     "estadoDepartamento"
 }

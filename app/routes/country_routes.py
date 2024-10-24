@@ -39,7 +39,7 @@ def get_countries():
     return jsonify(allCoutries), 200    
 
 
-#Method for get enabled country for combo.
+#Method for get combo country.
 @country_routes.route('/getComboCountries', methods=['GET'])
 @jwt_required()
 def get_combo_countries():

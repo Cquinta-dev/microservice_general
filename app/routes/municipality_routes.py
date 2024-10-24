@@ -39,7 +39,7 @@ def get_municipalities():
     return jsonify(allMunicipalities), 200    
 
 
-#Method for get one municipality.
+#Method for get combo municipality.
 @municipality_routes.route('/getComboMunicipalities', methods=['GET'])
 @jwt_required()
 def get_combo_municipalities():

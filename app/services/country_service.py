@@ -1,4 +1,4 @@
-from ..utils.validate_registers import ValidateRegisters
+from ..utils.validate_registers import ValidateRegister
 from ..models.country_model import Country
 from ..utils.constants import constants
 from ..database import db
@@ -10,7 +10,7 @@ class CountryService:
 
     def create_country(self, data, usr):
         try:
-            if ValidateRegisters.country_exists(data['id']):
+            if ValidateRegister.country_exists(data['id']):
                 return f"{constants.EXIST}{data['pais']}"
             else:
                 new_country = Country (
@@ -61,6 +61,9 @@ class CountryService:
 
     def get_combo_countries(self):
         read_countries = Country.query.filter(Country.status_cou == constants.ENABLED)
+        if read_countries.count() == 0:
+            return None
+        
         if read_countries:
             data = {
                 'paises': [
@@ -70,9 +73,6 @@ class CountryService:
                     } for p in read_countries
                 ]
             }
-        else:
-            
-            return None
 
         return data    
 

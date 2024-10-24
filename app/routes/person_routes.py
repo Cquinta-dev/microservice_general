@@ -24,15 +24,15 @@ def create_person():
     if personCreate is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500   
     
-    return jsonify({'message': 'Person created'}), 201
+    return jsonify({'message': personCreate}), 201
 
 
 #Method for get list to person.
 @person_routes.route('/allPersons', methods=['GET'])
 @jwt_required()
-def get_all_persons():
+def get_persons():
 
-    allPersons = service_manager.person_service.get_all_persons()
+    allPersons = service_manager.person_service.get_persons()
     if allPersons is None:
         return jsonify({'error': constants.NOT_FOUND_LIST}), 404
 
@@ -40,17 +40,17 @@ def get_all_persons():
 
 
 #Method for get one person.
-@person_routes.route('/getPerson', methods=['GET'])
+@person_routes.route('/getComboPerson', methods=['GET'])
 @jwt_required()
-def get_person():
+def get_combo_persons():
 
     id = request.args.get('id')
     if id is None: 
         return jsonify({'error': constants.NOT_ID}), 400
     
-    getPerson = service_manager.person_service.get_person(id)    
+    getPerson = service_manager.person_service.get_combo_persons(id)    
     if getPerson is None:
-        return jsonify({'error':'Person not found'}), 404
+        return jsonify({'error': constants.NOT_FOUND_LIST}), 404
     
     return jsonify(getPerson), 200
 
@@ -70,9 +70,9 @@ def update_person():
 
     updatePerson = service_manager.person_service.update_person(data, get_jwt_identity())
     if updatePerson is constants.NOT_FOUND:
-        return jsonify({'error':'Person not found'}), 404
+        return jsonify({'error': updatePerson + data['nombres']}), 404
     
     if updatePerson is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500        
         
-    return jsonify({'message': 'Person updated'}), 201
+    return jsonify({'message': updatePerson}), 201

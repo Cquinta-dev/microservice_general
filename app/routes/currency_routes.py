@@ -7,9 +7,9 @@ from ..utils.constants import constants
 
 currency_routes = Blueprint('currency', __name__)
 
-#Method for create person.
+#Method for create currency.
 @currency_routes.route('/createCurrency',methods=['POST'])
-#@jwt_required()
+@jwt_required()
 def create_currency():
           
     data = request.get_json(force=True)
@@ -20,7 +20,7 @@ def create_currency():
     if missing_fields:
         return jsonify({'error': constants.NOT_FIELDS, 'missing': list(missing_fields)}), 400
     
-    createCurrency = service_manager.currency_service.create_currency(data, 'root')#get_jwt_identity())
+    createCurrency = service_manager.currency_service.create_currency(data, get_jwt_identity())
     if createCurrency is None:
         return jsonify({'error': constants.INTERNAL_ERROR}), 500   
     
@@ -29,7 +29,7 @@ def create_currency():
 
 #Method for get list to currencies.
 @currency_routes.route('/allCurrencies', methods=['GET'])
-#@jwt_required()
+@jwt_required()
 def get_currencies():
 
     allCurrency = service_manager.currency_service.get_currencies()
@@ -39,9 +39,9 @@ def get_currencies():
     return jsonify(allCurrency), 200    
 
 
-#Method for get one corrency.
+#Method for get combo correncies.
 @currency_routes.route('/getCurrency', methods=['GET'])
-#@jwt_required()
+@jwt_required()
 def get_combo_currencies():
 
     id = request.args.get('id')
@@ -57,7 +57,7 @@ def get_combo_currencies():
 
 #Method for udpate currency.
 @currency_routes.route('/updateCurrency', methods=['PUT'])
-#@jwt_required()
+@jwt_required()
 def update_currency():    
 
     data = request.get_json(force=True)
@@ -68,7 +68,7 @@ def update_currency():
     if missing_fields:
         return jsonify({'error': constants.NOT_FIELDS, 'missing': list(missing_fields)}), 400
 
-    updateCurrency = service_manager.currency_service.update_currency(data, 'root')#get_jwt_identity())
+    updateCurrency = service_manager.currency_service.update_currency(data, get_jwt_identity())
     if updateCurrency is constants.NOT_FOUND:
         return jsonify({'error': updateCurrency + data['moneda']}), 404
     
